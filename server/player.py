@@ -4,3 +4,8 @@
 	Poker - Texas Holdem
 '''
 
+class Player(object):
+	def __init__(self, connection):
+		super(self.__class__, self).__init__()
+		self.connection = connection
+	

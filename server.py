@@ -4,7 +4,7 @@
 	Poker - Texas Holdem
 '''
 
-from server.game import deck
+from server.game import game, deck
 
 import json
 import sys
@@ -24,6 +24,7 @@ PORT_GAME_SERVER = 23345
 games = []
 
 class GameClient(WebSocketServerProtocol):
+	global games
 
 	def onConnect(self, request):
 		self.currentGame = -1
@@ -43,10 +44,14 @@ class GameClient(WebSocketServerProtocol):
 
 		if "games" in data:
 			gameIDs = []
-			for game in games:
-				gameIDs.append(game)
+			for aGame in games:
+				gameIDs.append(aGame.id)
 
 			self.sendMsg("G|"+json.dumps(gameIDs));
+
+		elif "create" in data:
+			newgame = game.HoldemGame(1)
+			games.append(newgame)
 
 		elif "join" in data:
 			try: # Set Current Game
