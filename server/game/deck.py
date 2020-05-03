@@ -12,5 +12,8 @@ class Deck(object):
 			for cValue in CardValue:
 				self.deck.append(Card(cClass, cValue))
 
-if __name__ == '__main__':
-	print("Hello World")
+	def __getitem__(self, index):
+		return self.deck[index]
+
+	def __setitem__(self, index, value):
+		self.deck[index] = value
