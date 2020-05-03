@@ -32,7 +32,7 @@ class Card(object):
 		self.cardValue = cardValue
 
 	def clientValue(self):
-		return "[%d,%d]" % (self.cardValue.value, self.cardClass.value)
+		return "[%d,%d]" % (self.cardClass.value, self.cardValue.value)
 
 	def __repr__(self):
 		return "%s of %s" % (self.cardValue.name, self.cardClass.name)
