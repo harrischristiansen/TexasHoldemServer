@@ -31,5 +31,8 @@ class Card(object):
 		self.cardClass = cardClass
 		self.cardValue = cardValue
 
+	def clientValue(self):
+		return "[%d,%d]" % (self.cardValue.value, self.cardClass.value)
+
 	def __repr__(self):
 		return "%s of %s" % (self.cardValue.name, self.cardClass.name)

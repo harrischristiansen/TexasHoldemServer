@@ -5,6 +5,8 @@
 '''
 from .card import *
 
+import random
+
 class Deck(object):
 	def __init__(self):
 		self.deck = []
@@ -17,3 +19,6 @@ class Deck(object):
 
 	def __setitem__(self, index, value):
 		self.deck[index] = value
+
+	def shuffle(self):
+		random.shuffle(self.deck)

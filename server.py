@@ -4,6 +4,9 @@
 	Poker - Texas Holdem
 '''
 
+from server.game import deck
+
+import json
 import sys
 import threading
 ########## Start Web Sockets ##########
@@ -31,7 +34,7 @@ class GameClient(WebSocketServerProtocol):
 
 	def sendMsg(self, msg):
 		with self.lock:
-			self.sendMessage(msg, False)
+			self.sendMessage(msg.encode('utf-8'), False)
 
 	def onMessage(self, payload, isBinary):
 		global games
@@ -47,8 +50,11 @@ class GameClient(WebSocketServerProtocol):
 
 		elif "join" in data:
 			try: # Set Current Game
-				self.currentGame = int(data.split()[1])
-				sendmsg(self.currentGame)
+				myDeck = deck.Deck()
+				myDeck.shuffle()
+				cards = [myDeck[0], myDeck[1]]
+				cards = [myDeck[0].clientValue(), myDeck[1].clientValue()]
+				self.sendMsg(str(cards))
 			except:
 				None
 
@@ -61,8 +67,9 @@ if __name__ == "__main__":
 	########## Start Web Sockets ##########
 	if DEBUG_ENABLED:
 		log.startLogging(sys.stdout)
-	factory = WebSocketServerFactory(u"ws://127.0.0.1:"+str(PORT_GAME_SERVER))
+	factory = WebSocketServerFactory()
 	factory.protocol = GameClient
+	#factory.setProtocolOptions(failByDrop=False, openHandshakeTimeout=90, closeHandshakeTimeout=5)
 	# factory.setProtocolOptions(maxConnections=2)
 	reactor.listenTCP(PORT_GAME_SERVER, factory)
 	reactor.run()
