@@ -3,6 +3,7 @@
 	2020-05-03
 	Poker - Texas Holdem
 '''
+from enum import Enum
 
 class CardClass(Enum):
 	HEART = 1
@@ -25,7 +26,10 @@ class CardValue(Enum):
 	QUEEN = 12
 	KING = 13
 
-class Card():
+class Card(object):
 	def __init__(self, cardClass, cardValue):
 		self.cardClass = cardClass
 		self.cardValue = cardValue
+
+	def __repr__(self):
+		return "%s of %s" % (self.cardValue.name, self.cardClass.name)
