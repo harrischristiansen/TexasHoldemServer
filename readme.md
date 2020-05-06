@@ -1,4 +1,4 @@
-# Purdue Hackers Battleship
+# Texas Hold-em
 
 ## Synopsis
 
@@ -21,10 +21,27 @@ Install pip
 
 - [ ] Visit poker.purduecs.com
 
+## Features
+
+- [ ] Rooms
+	- [ ] Create Room
+		- [ ] Owner Configuration Settings
+	- [ ] List Rooms
+	- [ ] Join Room
+		- [ ] Buy-in
+	- [ ] Player Updates
+- [ ] Games
+	- [ ] Start/End Game
+	- [ ] Bet
+	- [ ] Hand Cards
+	- [ ] Board Cards
+	- [ ] Result
+	- [ ] Chip Stacks
+
 ## Contributors
 
-@harrischristiansen (http://www.harrischristiansen.com): Developed Server, Client, Web Interface/Game Manager, and Web Viewer  
-@mehakvohra  
+@harrischristiansen (http://www.harrischristiansen.com): Developed Server  
+@mehakvohra: Developed Client, Web Interface/Game Manager, and Web Viewer  
 
 ## License
 

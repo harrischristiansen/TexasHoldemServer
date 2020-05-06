@@ -4,6 +4,7 @@
 	Poker - Texas Holdem
 '''
 
+from server import room
 from server.game import game, deck
 
 import json
@@ -21,7 +22,7 @@ PORT_GAME_SERVER = 23345
 
 ############################################ Web Client ############################################
 
-games = []
+rooms = []
 
 class GameClient(WebSocketServerProtocol):
 	global games
@@ -38,28 +39,27 @@ class GameClient(WebSocketServerProtocol):
 			self.sendMessage(msg.encode('utf-8'), False)
 
 	def onMessage(self, payload, isBinary):
-		global games
+		global rooms
 
 		data = format(payload.decode('utf8'))
 
-		if "games" in data:
-			gameIDs = []
-			for aGame in games:
-				gameIDs.append(aGame.id)
+		if "rooms" in data:
+			roomIDs = []
+			for room in rooms:
+				roomIDs.append(room.id)
 
-			self.sendMsg("G|"+json.dumps(gameIDs));
+			self.sendMsg("R|"+json.dumps(roomIDs));
 
 		elif "create" in data:
-			newgame = game.HoldemGame(1)
-			games.append(newgame)
+			newRoom = room.Room(1)
+			rooms.append(newRoom)
 
 		elif "join" in data:
 			try: # Set Current Game
 				myDeck = deck.Deck()
 				myDeck.shuffle()
-				cards = [myDeck[0], myDeck[1]]
 				cards = [myDeck[0].clientValue(), myDeck[1].clientValue()]
-				self.sendMsg(str(cards))
+				self.sendMsg(json.dumps(cards))
 			except:
 				None
 
