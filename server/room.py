@@ -4,6 +4,7 @@
 	Poker - Texas Holdem
 '''
 
+import json
 import random
 import string
 import threading
@@ -13,10 +14,17 @@ class Room(threading.Thread):
 		super(self.__class__, self).__init__()
 		self.id = ''.join(random.choice(string.ascii_lowercase) for i in range(10))
 		self.owner = owner
-		self.players = [owner]
+		self.players = []
+		self.addPlayer(owner)
 
 	def addPlayer(self, player):
 		self.players.append(player)
+		player.currentRoom = self
+		self.sendToRoom("Player|"+json.dumps(player.clientValue()));
+
+	def sendToRoom(self, msg):
+		for player in self.players:
+			player.sendMsg(msg)
 
 	def playersJson(self):
 		players = []

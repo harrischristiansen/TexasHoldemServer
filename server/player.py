@@ -19,12 +19,16 @@ class PlayerClient(WebSocketServerProtocol):
 		return "%s" % (self.request.peer)
 
 	def clientValue(self):
-		return [self.currentSeat, str(self), self.balance]
+		return [self.currentSeat(), str(self), self.balance]
+
+	def currentSeat(self):
+		if self.currentRoom == -1:
+			return -1
+		return self.currentRoom.players.index(self)
 
 	def onConnect(self, request):
 		self.request = request
 		self.currentRoom = -1
-		self.currentSeat = -1
 		self.balance = 0.0
 		self.lock = threading.Lock()
 
@@ -43,7 +47,7 @@ class PlayerClient(WebSocketServerProtocol):
 
 		if "rooms" in data:
 			if self.currentRoom != -1:
-				return self.sendMsg("R|"+json.dumps(self.currentRoom));
+				return self.sendMsg("Rooms|"+json.dumps(self.currentRoom.id));
 			self.sendMsg("R|"+json.dumps(list(rooms.keys())));
 
 		elif "create" in data:
@@ -51,10 +55,7 @@ class PlayerClient(WebSocketServerProtocol):
 				return self.sendMsg("Error|Already In Room");
 			newRoom = Room(self)
 			rooms[newRoom.id] = newRoom
-			self.currentRoom = newRoom.id
-			self.currentSeat = 0
 			self.sendMsg(json.dumps(newRoom.id));
-			self.sendMsg(json.dumps(self.clientValue()));
 
 		elif "join" in data:
 			if self.currentRoom != -1:
@@ -62,17 +63,16 @@ class PlayerClient(WebSocketServerProtocol):
 			roomID = command[1] if len(command) > 1 else "null"
 			if roomID not in rooms.keys():
 				return self.sendMsg("Error|Room Not Found");
-			rooms[roomID].addPlayer(self)
-			self.currentRoom = roomID
-			self.currentSeat = rooms[roomID].players.index(self)
-			self.sendMsg(json.dumps(rooms[roomID].playersJson()));
+			self.currentRoom = rooms[roomID]
+			self.currentRoom.addPlayer(self)
+			self.sendMsg("Players|"+json.dumps(self.currentRoom.playersJson()))
 
 		elif "buyin" in data:
 			if len(command) > 1:
 				try:
 					amount = float(command[1])
 					self.balance += amount
-					self.sendMsg(json.dumps(self.clientValue()));
+					self.currentRoom.sendToRoom("Player|"+json.dumps(self.clientValue()));
 				except:
 					None
 
