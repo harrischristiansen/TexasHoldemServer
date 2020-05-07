@@ -16,5 +16,11 @@ class Room(threading.Thread):
 		self.players = [owner]
 
 	def addPlayer(self, player):
-		players.append(player)
+		self.players.append(player)
+
+	def playersJson(self):
+		players = []
+		for player in self.players:
+			players.append(player.clientValue())
+		return players
 	
