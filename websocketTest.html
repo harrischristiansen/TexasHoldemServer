@@ -1,14 +1,42 @@
 <!DOCTYPE html>
+<html>
+<head>
   <meta charset="utf-8" />
   <title>WebSocket Test</title>
+
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0px;
+      padding: 0px;
+    }
+
+    #leftSidebar {
+      width: 200px;
+      float: left;
+      height: 100%;
+      border-right: 1px solid #000000;
+      margin-right: 10px;
+    }
+
+    #leftSidebar > * {
+      padding-left: 15px;
+    }
+
+    #leftSidebarTitle {
+      border-bottom: 1px solid #000000;
+    }
+  </style>
+
   <script language="javascript" type="text/javascript">
 
   var wsUri = "ws://192.168.50.155:23345/";
-  var output;
+  var output, roomDiv;
 
   function init()
   {
     output = document.getElementById("output");
+    roomDiv = document.getElementById("rooms");
 
     const msgField = document.getElementById("msgField");
     msgField.addEventListener("keyup", function(e) {
@@ -43,7 +71,11 @@
 
   function onMessage(evt)
   {
-    writeToScreen('<span style="color: blue;">RESPONSE: ' + evt.data+'</span>');
+    if (evt.data.includes("R|")) {
+      writeToRooms(evt.data.split('|')[1]);
+    } else {
+      writeToScreen('<span style="color: blue;">RESPONSE: ' + evt.data+'</span>');
+    }
   }
 
   function onError(evt)
@@ -57,6 +89,20 @@
     websocket.send(message);
   }
 
+  function writeToRooms(roomList)
+  {
+    console.log('roomList',roomList);
+    var rooms = JSON.parse(roomList);
+    console.log(rooms);
+    for (const room of rooms) {
+      var pre = document.createElement("p");
+      pre.style.wordWrap = "break-word";
+      console.log(room);
+      pre.innerHTML = room;
+      roomDiv.appendChild(pre);
+    }
+  }
+
   function writeToScreen(message)
   {
     var pre = document.createElement("p");
@@ -68,9 +114,18 @@
   window.addEventListener("load", init, false);
 
   </script>
+</head>
+<body>
+  <div id="leftSidebar">
+    <h2 id="leftSidebarTitle">Rooms</h2>
+    <div id="rooms"></div>
+  </div>
+  <div id="mainContent">
+    <h2>Poker WebSocket Test</h2>
 
-  <h2>Poker WebSocket Test</h2>
+    <input placeholder="Send Message" name="msgField" id="msgField">
 
-  <input placeholder="Send Message" name="msgField" id="msgField">
-
-  <div id="output"></div>
+    <div id="output"></div>
+  </div>
+</body>
+</html>

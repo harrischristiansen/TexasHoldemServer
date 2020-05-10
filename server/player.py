@@ -47,7 +47,7 @@ class PlayerClient(WebSocketServerProtocol):
 
 		if "rooms" in data:
 			if self.currentRoom != -1:
-				return self.sendMsg("Rooms|"+json.dumps(self.currentRoom.id));
+				return self.sendMsg("R|"+json.dumps([self.currentRoom.id]));
 			self.sendMsg("R|"+json.dumps(list(rooms.keys())));
 
 		elif "create" in data:
